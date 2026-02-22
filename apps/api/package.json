@@ -1,0 +1,29 @@
+{
+  "name": "@biblegpt/api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.0",
+    "dotenv": "^16.4.0",
+    "@biblegpt/database": "workspace:*",
+    "@prisma/client": "^5.22.0",
+    "@supabase/supabase-js": "^2.47.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "stripe": "^17.0.0",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

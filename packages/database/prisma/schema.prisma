@@ -1,0 +1,341 @@
+// BibleGPT — Prisma Schema
+// Database: PostgreSQL via Supabase
+// Run `pnpm db:push` to sync schema, `pnpm db:generate` to regenerate client
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── User ────────────────────────────────────────────────────────────────────
+// id mirrors Supabase auth.users.id (UUID)
+model User {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  name        String?
+  avatarUrl   String?  @map("avatar_url")
+  referralCode String  @unique @map("referral_code")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  subscription       Subscription?
+  referralsMade      Referral[]           @relation("ReferrerRelation")
+  referredBy         Referral?            @relation("RefereeRelation")
+  notes              BibleNote[]
+  readingPlans       UserReadingProgress[]
+  journals           Journal[]
+  streak             Streak?
+  groupMemberships   GroupMember[]
+  groupMessages      GroupMessage[]
+  prayerRequests     PrayerRequest[]
+  sentFriendRequests FriendRequest[]      @relation("SentRequests")
+  receivedFriendRequests FriendRequest[]  @relation("ReceivedRequests")
+  friendshipsA       Friend[]             @relation("FriendA")
+  friendshipsB       Friend[]             @relation("FriendB")
+  sentMessages       DirectMessage[]      @relation("SentMessages")
+  aiConversations    AIConversation[]
+
+  @@map("users")
+}
+
+// ─── Subscription ─────────────────────────────────────────────────────────────
+model Subscription {
+  id                 String    @id @default(cuid())
+  userId             String    @unique @map("user_id")
+  stripeCustomerId   String?   @unique @map("stripe_customer_id")
+  stripeSubscriptionId String? @unique @map("stripe_subscription_id")
+  stripePriceId      String?   @map("stripe_price_id")
+  status             String    @default("trialing") // trialing | active | past_due | canceled
+  trialEndsAt        DateTime? @map("trial_ends_at")
+  currentPeriodEnd   DateTime? @map("current_period_end")
+  cancelAtPeriodEnd  Boolean   @default(false) @map("cancel_at_period_end")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+// ─── Referral ─────────────────────────────────────────────────────────────────
+model Referral {
+  id          String    @id @default(cuid())
+  referrerId  String    @map("referrer_id")
+  refereeId   String    @unique @map("referee_id")
+  rewardGiven Boolean   @default(false) @map("reward_given")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  referrer User @relation("ReferrerRelation", fields: [referrerId], references: [id], onDelete: Cascade)
+  referee  User @relation("RefereeRelation", fields: [refereeId], references: [id], onDelete: Cascade)
+
+  @@index([referrerId])
+  @@map("referrals")
+}
+
+// ─── BibleNote ────────────────────────────────────────────────────────────────
+model BibleNote {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  book      String
+  chapter   Int
+  verse     Int?
+  content   String
+  highlight String?  // hex color for verse highlight
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, book, chapter])
+  @@map("bible_notes")
+}
+
+// ─── ReadingPlan ──────────────────────────────────────────────────────────────
+model ReadingPlan {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  durationDays Int     @map("duration_days")
+  schedule    Json     // Array of { day: number, passages: string[] }
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  userProgress UserReadingProgress[]
+
+  @@map("reading_plans")
+}
+
+// ─── UserReadingProgress ──────────────────────────────────────────────────────
+model UserReadingProgress {
+  id           String    @id @default(cuid())
+  userId       String    @map("user_id")
+  planId       String    @map("plan_id")
+  currentDay   Int       @default(1) @map("current_day")
+  startedAt    DateTime  @default(now()) @map("started_at")
+  completedAt  DateTime? @map("completed_at")
+  lastReadAt   DateTime? @map("last_read_at")
+
+  user User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan ReadingPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, planId])
+  @@index([userId])
+  @@map("user_reading_progress")
+}
+
+// ─── Devotional ───────────────────────────────────────────────────────────────
+model Devotional {
+  id          String   @id @default(cuid())
+  date        DateTime @unique @db.Date
+  title       String
+  verse       String   // e.g. "John 3:16"
+  verseText   String   @map("verse_text")
+  content     String
+  prayer      String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("devotionals")
+}
+
+// ─── Journal ──────────────────────────────────────────────────────────────────
+model Journal {
+  id            String    @id @default(cuid())
+  userId        String    @map("user_id")
+  title         String?
+  content       String
+  isPrayer      Boolean   @default(false) @map("is_prayer")
+  isAnswered    Boolean   @default(false) @map("is_answered")
+  answeredAt    DateTime? @map("answered_at")
+  sharedGroupId String?   @map("shared_group_id")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  user  User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group Group?  @relation(fields: [sharedGroupId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@map("journals")
+}
+
+// ─── Streak ───────────────────────────────────────────────────────────────────
+model Streak {
+  id           String    @id @default(cuid())
+  userId       String    @unique @map("user_id")
+  currentStreak Int      @default(0) @map("current_streak")
+  longestStreak Int      @default(0) @map("longest_streak")
+  lastActivityAt DateTime? @map("last_activity_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("streaks")
+}
+
+// ─── Group ────────────────────────────────────────────────────────────────────
+model Group {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  avatarUrl   String?  @map("avatar_url")
+  isPrivate   Boolean  @default(false) @map("is_private")
+  createdById String   @map("created_by_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  members       GroupMember[]
+  messages      GroupMessage[]
+  announcements GroupAnnouncement[]
+  assignments   GroupReadingAssignment[]
+  journals      Journal[]
+  prayerRequests PrayerRequest[]
+
+  @@map("groups")
+}
+
+// ─── GroupMember ──────────────────────────────────────────────────────────────
+model GroupMember {
+  id       String   @id @default(cuid())
+  groupId  String   @map("group_id")
+  userId   String   @map("user_id")
+  role     String   @default("member") // admin | member
+  joinedAt DateTime @default(now()) @map("joined_at")
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@map("group_members")
+}
+
+// ─── GroupAnnouncement ────────────────────────────────────────────────────────
+model GroupAnnouncement {
+  id        String   @id @default(cuid())
+  groupId   String   @map("group_id")
+  authorId  String   @map("author_id")
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@index([groupId])
+  @@map("group_announcements")
+}
+
+// ─── GroupMessage ─────────────────────────────────────────────────────────────
+// Stored in DB; Supabase Realtime broadcasts inserts automatically
+model GroupMessage {
+  id        String   @id @default(cuid())
+  groupId   String   @map("group_id")
+  userId    String   @map("user_id")
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([groupId, createdAt])
+  @@map("group_messages")
+}
+
+// ─── GroupReadingAssignment ───────────────────────────────────────────────────
+model GroupReadingAssignment {
+  id        String   @id @default(cuid())
+  groupId   String   @map("group_id")
+  passage   String   // e.g. "John 3:1-21"
+  dueDate   DateTime? @map("due_date")
+  notes     String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@index([groupId])
+  @@map("group_reading_assignments")
+}
+
+// ─── PrayerRequest ────────────────────────────────────────────────────────────
+model PrayerRequest {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  groupId     String?   @map("group_id")
+  content     String
+  isAnswered  Boolean   @default(false) @map("is_answered")
+  answeredAt  DateTime? @map("answered_at")
+  isPublic    Boolean   @default(true) @map("is_public")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group Group? @relation(fields: [groupId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([groupId])
+  @@map("prayer_requests")
+}
+
+// ─── FriendRequest ────────────────────────────────────────────────────────────
+model FriendRequest {
+  id         String   @id @default(cuid())
+  senderId   String   @map("sender_id")
+  receiverId String   @map("receiver_id")
+  status     String   @default("pending") // pending | accepted | declined
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  sender   User @relation("SentRequests", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("ReceivedRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([senderId, receiverId])
+  @@map("friend_requests")
+}
+
+// ─── Friend ───────────────────────────────────────────────────────────────────
+model Friend {
+  id        String   @id @default(cuid())
+  userAId   String   @map("user_a_id")
+  userBId   String   @map("user_b_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  userA User @relation("FriendA", fields: [userAId], references: [id], onDelete: Cascade)
+  userB User @relation("FriendB", fields: [userBId], references: [id], onDelete: Cascade)
+
+  @@unique([userAId, userBId])
+  @@map("friends")
+}
+
+// ─── DirectMessage ────────────────────────────────────────────────────────────
+// conversationId = sorted [userId1, userId2].join("_")
+// Supabase Realtime broadcasts inserts automatically
+model DirectMessage {
+  id             String   @id @default(cuid())
+  conversationId String   @map("conversation_id")
+  senderId       String   @map("sender_id")
+  content        String
+  isRead         Boolean  @default(false) @map("is_read")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  sender User @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+  @@index([senderId])
+  @@map("direct_messages")
+}
+
+// ─── AIConversation ───────────────────────────────────────────────────────────
+model AIConversation {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  title     String?
+  messages  Json     // Array of { role: "user"|"assistant", content: string }
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("ai_conversations")
+}

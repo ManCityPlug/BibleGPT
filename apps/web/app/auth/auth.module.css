@@ -1,0 +1,41 @@
+.container {
+  min-height: 100vh; display: flex; align-items: center;
+  justify-content: center; padding: 24px; background: var(--bg);
+}
+.card {
+  background: white; border-radius: 20px; padding: 40px;
+  border: 1px solid var(--border); width: 100%; max-width: 420px;
+  box-shadow: 0 4px 24px rgba(44,26,14,0.08);
+}
+.logo { font-size: 22px; font-weight: 800; color: var(--primary); text-align: center; margin-bottom: 8px; }
+.title { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 24px; }
+.trialBadge {
+  background: var(--gold-bg); border: 1px solid var(--gold);
+  border-radius: 8px; padding: 10px 16px; text-align: center;
+  font-size: 13px; font-weight: 600; margin-bottom: 24px;
+}
+.form { display: flex; flex-direction: column; gap: 16px; }
+.form label {
+  display: flex; flex-direction: column; gap: 6px;
+  font-size: 13px; font-weight: 600; color: var(--text-2);
+}
+.form input {
+  border: 1.5px solid var(--border); border-radius: 10px;
+  padding: 10px 14px; font-size: 15px; color: var(--text);
+  background: var(--bg); outline: none; font-family: inherit;
+}
+.form input:focus { border-color: var(--primary); }
+.submitBtn {
+  background: var(--primary); color: white; font-size: 16px; font-weight: 700;
+  padding: 12px; border-radius: 10px; margin-top: 8px; transition: opacity 0.2s;
+}
+.submitBtn:hover:not(:disabled) { opacity: 0.9; }
+.submitBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+.error {
+  background: #FDECEC; border: 1px solid #B53E3E; color: #B53E3E;
+  border-radius: 8px; padding: 10px 14px; font-size: 13px;
+}
+.switchText { text-align: center; font-size: 14px; color: var(--text-2); margin-top: 20px; }
+.switchText a { color: var(--primary); font-weight: 600; }
+.backLink { text-align: center; font-size: 13px; color: var(--text-3); margin-top: 12px; }
+.backLink a { color: var(--text-3); }

@@ -1,0 +1,22 @@
+export { PrismaClient } from "@prisma/client";
+export type {
+  User,
+  Subscription,
+  Referral,
+  BibleNote,
+  ReadingPlan,
+  UserReadingProgress,
+  Devotional,
+  Journal,
+  Streak,
+  Group,
+  GroupMember,
+  GroupAnnouncement,
+  GroupMessage,
+  GroupReadingAssignment,
+  PrayerRequest,
+  FriendRequest,
+  Friend,
+  DirectMessage,
+  AIConversation,
+} from "@prisma/client";

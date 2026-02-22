@@ -1,0 +1,95 @@
+.main { min-height: 100vh; }
+
+/* Nav */
+.nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 48px; background: var(--bg);
+  border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;
+}
+.navLogo { font-size: 20px; font-weight: 800; color: var(--primary); }
+.navLinks { display: flex; align-items: center; gap: 24px; }
+.navLinks a { color: var(--text-2); font-size: 15px; }
+.navLogin { color: var(--primary) !important; font-weight: 600; }
+.navCta {
+  background: var(--primary); color: white !important; font-weight: 700;
+  padding: 8px 20px; border-radius: 999px; font-size: 14px;
+}
+
+/* Hero */
+.hero {
+  text-align: center; padding: 80px 24px 100px;
+  max-width: 800px; margin: 0 auto;
+}
+.heroBadge {
+  display: inline-block; background: var(--gold-bg); border: 1px solid var(--gold);
+  color: var(--text); font-size: 13px; font-weight: 600;
+  padding: 6px 16px; border-radius: 999px; margin-bottom: 32px;
+}
+.heroTitle { font-size: 56px; font-weight: 800; line-height: 1.1; color: var(--text); margin-bottom: 24px; }
+.heroAccent { color: var(--primary); }
+.heroSub { font-size: 18px; color: var(--text-2); max-width: 600px; margin: 0 auto 40px; line-height: 1.7; }
+.heroCtas { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.heroNote { margin-top: 24px; font-size: 13px; color: var(--text-3); }
+
+/* CTAs */
+.ctaPrimary {
+  background: var(--primary); color: white; font-weight: 700; font-size: 16px;
+  padding: 14px 32px; border-radius: 999px; display: inline-block;
+  transition: opacity 0.2s;
+}
+.ctaPrimary:hover { opacity: 0.9; }
+.ctaSecondary {
+  background: transparent; color: var(--primary); font-weight: 600; font-size: 16px;
+  padding: 14px 32px; border-radius: 999px; border: 2px solid var(--primary);
+  display: inline-block;
+}
+.ctaOutline {
+  background: transparent; color: var(--primary); font-weight: 700; font-size: 15px;
+  padding: 12px 24px; border-radius: 999px; border: 2px solid var(--primary);
+  display: inline-block; text-align: center; margin-top: auto;
+}
+
+/* Features */
+.features { padding: 80px 48px; background: var(--surface); }
+.sectionTitle { font-size: 36px; font-weight: 800; text-align: center; margin-bottom: 16px; }
+.featureGrid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px; max-width: 1100px; margin: 48px auto 0;
+}
+.featureCard {
+  background: var(--bg); border-radius: 16px; padding: 28px;
+  border: 1px solid var(--border);
+}
+.featureIcon { font-size: 36px; display: block; margin-bottom: 16px; }
+.featureTitle { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+.featureDesc { font-size: 14px; color: var(--text-2); line-height: 1.6; }
+
+/* Pricing */
+.pricing { padding: 80px 48px; }
+.pricingSub { text-align: center; color: var(--text-2); font-size: 16px; margin-bottom: 48px; }
+.pricingGrid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px; max-width: 700px; margin: 0 auto;
+}
+.pricingCard {
+  background: var(--surface); border-radius: 20px; padding: 32px;
+  border: 2px solid var(--border); display: flex; flex-direction: column; gap: 16px;
+}
+.pricingCardHighlight { border-color: var(--primary); background: var(--primary-bg); }
+.pricingBadge {
+  background: var(--gold); color: white; font-size: 12px; font-weight: 700;
+  padding: 4px 12px; border-radius: 999px; align-self: flex-start;
+}
+.pricingName { font-size: 20px; font-weight: 800; }
+.pricingPrice { font-size: 40px; font-weight: 800; color: var(--primary); }
+.pricingPeriod { font-size: 16px; font-weight: 400; color: var(--text-2); }
+.pricingFeatures { list-style: none; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.pricingFeatures li { font-size: 14px; display: flex; align-items: center; gap: 8px; }
+.check { color: var(--success); font-weight: 700; }
+
+/* Footer */
+.footer {
+  text-align: center; padding: 40px 24px;
+  border-top: 1px solid var(--border); color: var(--text-3); font-size: 13px;
+  display: flex; flex-direction: column; gap: 8px;
+}
