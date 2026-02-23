@@ -90,7 +90,7 @@ export default function LandingPage() {
           <a href="#features" className={styles.navTextLink}>Features</a>
           <a href="#ai" className={styles.navTextLink}>AI Chat</a>
           <Link href="/auth/login" className={styles.navLogin}>Sign In</Link>
-          <Link href="/auth/register" className={styles.navCta}>Try for Free</Link>
+          <Link href="/auth/register" className={styles.navCta}>Start for Free</Link>
         </div>
       </nav>
 
@@ -107,7 +107,7 @@ export default function LandingPage() {
               BibleGPT brings the complete King James Bible to life — AI answers rooted in scripture, guided reading plans, community groups, and a prayer journal, all in one place.
             </p>
             <div className={styles.heroCtas}>
-              <Link href="/auth/register" className={styles.ctaPrimary}>Try BibleGPT for Free →</Link>
+              <Link href="/auth/register" className={styles.ctaPrimary}>Start for Free →</Link>
               <a href="#how" className={styles.ctaGhost}>How it works</a>
             </div>
             <p className={styles.heroNote}>No credit card required · Cancel anytime</p>
@@ -168,7 +168,7 @@ export default function LandingPage() {
         {[
           { num: "66", label: "Books of the Bible" },
           { num: "31,102", label: "KJV Verses" },
-          { num: "7-Day", label: "Free Trial" },
+          { num: "100%", label: "Free to Start" },
         ].map((s) => (
           <div key={s.label} className={styles.statItem}>
             <span className={styles.statNum}>{s.num}</span>
@@ -210,7 +210,7 @@ export default function LandingPage() {
               <li><span className={styles.bullet}>✦</span> Covers theology, history &amp; prophecy</li>
               <li><span className={styles.bullet}>✦</span> Always quotes KJV scripture verbatim</li>
             </ul>
-            <Link href="/auth/register" className={styles.ctaPrimary}>Try BibleGPT for Free →</Link>
+            <Link href="/auth/register" className={styles.ctaPrimary}>Start for Free →</Link>
           </div>
           <div className={styles.aiVisual}>
             <div className={styles.verseCard}>
@@ -250,23 +250,54 @@ export default function LandingPage() {
       {/* ── CTA Banner ── */}
       <section className={styles.ctaBannerWrap}>
         <div className={styles.ctaBanner}>
-          <span className={styles.bannerEyebrow}>✦ 7-DAY FREE TRIAL</span>
+          <span className={styles.bannerEyebrow}>✦ START FOR FREE</span>
           <h2 className={styles.bannerTitle}>Begin your journey through God's Word today</h2>
-          <p className={styles.bannerSub}>No credit card required · Cancel anytime · Available on iOS, Android &amp; Web</p>
-          <Link href="/auth/register" className={styles.ctaBannerBtn}>Try BibleGPT for Free →</Link>
+          <p className={styles.bannerSub}>No credit card required · Available on iOS, Android &amp; Web</p>
+          <Link href="/auth/register" className={styles.ctaBannerBtn}>Start for Free →</Link>
         </div>
       </section>
 
       {/* ── Footer ── */}
       <footer className={styles.footer}>
-        <div className={styles.footerLeft}>
-          <span className={styles.footerLogo}>✝ BibleGPT</span>
-          <p>© {new Date().getFullYear()} MITEV LLC. All rights reserved.</p>
-          <p>Uses the King James Version (KJV) — public domain.</p>
+        <div className={styles.footerTop}>
+          <div className={styles.footerBrand}>
+            <div className={styles.footerLogo}>
+              <span className={styles.footerLogoIcon}>✝</span>
+              BibleGPT
+            </div>
+            <p className={styles.footerTagline}>
+              Your AI-powered Bible companion. Explore the King James Version with guidance, community, and daily devotion.
+            </p>
+            <div className={styles.footerActions}>
+              <Link href="/auth/login" className={styles.footerSignIn}>Sign In</Link>
+              <Link href="/auth/register" className={styles.footerStartBtn}>Start for Free</Link>
+            </div>
+          </div>
+
+          <div className={styles.footerCol}>
+            <p className={styles.footerColTitle}>FEATURES</p>
+            <ul>
+              <li><a href="#features">KJV Bible Reader</a></li>
+              <li><a href="#ai">AI Bible Companion</a></li>
+              <li><a href="#features">Reading Plans</a></li>
+              <li><a href="#features">Prayer Journal</a></li>
+              <li><a href="#features">Community Groups</a></li>
+            </ul>
+          </div>
+
+          <div className={styles.footerCol}>
+            <p className={styles.footerColTitle}>ACCOUNT</p>
+            <ul>
+              <li><Link href="/auth/register">Create Account</Link></li>
+              <li><Link href="/auth/login">Sign In</Link></li>
+              <li><Link href="/dashboard">Dashboard</Link></li>
+            </ul>
+          </div>
         </div>
-        <div className={styles.footerRight}>
-          <Link href="/auth/login">Sign In</Link>
-          <Link href="/auth/register">Start Free Trial</Link>
+
+        <div className={styles.footerBottom}>
+          <p className={styles.footerCopy}>© {new Date().getFullYear()} MITEV LLC · Uses the King James Version (KJV) — public domain</p>
+          <p className={styles.footerCopy}>biblegpt.net</p>
         </div>
       </footer>
     </main>
