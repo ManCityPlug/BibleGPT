@@ -93,3 +93,38 @@
   border-top: 1px solid var(--border); color: var(--text-3); font-size: 13px;
   display: flex; flex-direction: column; gap: 8px;
 }
+
+/* ── Mobile ──────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  /* Nav */
+  .nav { padding: 14px 20px; }
+  .navLogo { font-size: 18px; }
+  /* Hide Features / Pricing links — keep Sign In + CTA */
+  .navLinks a:not(.navLogin):not(.navCta) { display: none; }
+  .navLinks { gap: 12px; }
+  .navCta { padding: 8px 14px; font-size: 13px; white-space: nowrap; }
+
+  /* Hero */
+  .hero { padding: 48px 20px 64px; }
+  .heroTitle { font-size: 36px; line-height: 1.15; margin-bottom: 20px; }
+  .heroSub { font-size: 16px; margin-bottom: 32px; }
+  .heroBadge { font-size: 12px; padding: 5px 14px; margin-bottom: 24px; }
+  .heroCtas { flex-direction: column; align-items: stretch; gap: 12px; }
+  .ctaPrimary { font-size: 15px; padding: 14px 24px; text-align: center; }
+  .ctaSecondary { font-size: 15px; padding: 14px 24px; text-align: center; }
+
+  /* Features */
+  .features { padding: 56px 20px; }
+  .sectionTitle { font-size: 26px; }
+  .featureGrid { grid-template-columns: 1fr; gap: 16px; margin-top: 32px; }
+  .featureCard { padding: 20px; }
+
+  /* Pricing */
+  .pricing { padding: 56px 20px; }
+  .pricingGrid { grid-template-columns: 1fr; }
+  .pricingCard { padding: 24px; }
+  .pricingPrice { font-size: 32px; }
+
+  /* Footer */
+  .footer { padding: 32px 20px; font-size: 12px; }
+}
