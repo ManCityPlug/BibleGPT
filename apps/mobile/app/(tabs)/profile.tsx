@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   View, Text, TouchableOpacity, StyleSheet, ScrollView,
-  ActivityIndicator, Alert,
+  ActivityIndicator, Share,
 } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -113,7 +113,12 @@ export default function ProfileScreen() {
         </View>
         <TouchableOpacity
           style={styles.shareBtn}
-          onPress={() => Alert.alert("Share", `Join me on BibleGPT! Use code ${referralCode} for a bonus.`)}
+          onPress={() =>
+            Share.share({
+              message: `Join me on BibleGPT — the #1 Bible study app! Use my code ${referralCode} when you sign up for a free bonus. Download: https://biblegpt.app`,
+              title: "Join me on BibleGPT",
+            })
+          }
         >
           <Text style={styles.shareBtnText}>Share Code</Text>
         </TouchableOpacity>

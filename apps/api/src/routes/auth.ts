@@ -18,7 +18,7 @@ router.post("/api/auth/register", async (req, res) => {
 
   try {
     const referralCode = crypto.randomBytes(4).toString("hex").toUpperCase();
-    const { referralCode: incomingCode } = req.body as { referralCode?: string };
+    const { referralCode: incomingCode, name } = req.body as { referralCode?: string; name?: string };
 
     const existing = await prisma.user.findUnique({ where: { id: user.id } });
     if (existing) {
@@ -30,6 +30,7 @@ router.post("/api/auth/register", async (req, res) => {
       data: {
         id: user.id,
         email: user.email,
+        name: name?.trim() || null,
         referralCode,
         streak: { create: {} },
       },

@@ -18,16 +18,28 @@ export default function RegisterScreen() {
   const [loading, setLoading] = useState(false);
 
   async function handleRegister() {
+    if (!name.trim()) { Alert.alert("Error", "Please enter your name"); return; }
     if (!email || !password) { Alert.alert("Error", "Email and password required"); return; }
     if (password.length < 8) { Alert.alert("Error", "Password must be at least 8 characters"); return; }
 
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({ email, password, options: { data: { name } } });
+      const { data: signUpData, error } = await supabase.auth.signUp({ email, password, options: { data: { name } } });
       if (error) throw error;
 
+      // Wait for session to be available (up to 5s)
+      let session = signUpData.session;
+      if (!session) {
+        for (let i = 0; i < 10; i++) {
+          await new Promise(r => setTimeout(r, 500));
+          const { data } = await supabase.auth.getSession();
+          if (data.session) { session = data.session; break; }
+        }
+      }
+      if (!session) throw new Error("Email confirmation is required. Please check your email or contact support.");
+
       // Create DB user record
-      await authApi.register(referralCode || undefined);
+      await authApi.register(name.trim() || undefined, referralCode || undefined);
       await AsyncStorage.removeItem("@biblegpt_onboarding_done");
 
       router.replace("/(onboarding)");
@@ -48,7 +60,7 @@ export default function RegisterScreen() {
         <Text style={styles.tagline}>Start your 7-day free trial</Text>
 
         <View style={styles.form}>
-          <Text style={styles.label}>Name (optional)</Text>
+          <Text style={styles.label}>Name</Text>
           <TextInput
             style={styles.input} value={name} onChangeText={setName}
             placeholder="Your name" placeholderTextColor={colors.textTertiary}

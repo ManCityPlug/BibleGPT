@@ -243,9 +243,9 @@ export const accountApi = {
 
 // ─── Auth (register) ─────────────────────────────────────────────────────────
 export const authApi = {
-  register: (referralCode?: string) =>
+  register: (name?: string, referralCode?: string) =>
     apiFetch<{ user: UserProfile }>("/api/auth/register", {
-      method: "POST", body: JSON.stringify({ referralCode }),
+      method: "POST", body: JSON.stringify({ name, referralCode }),
     }),
 };
 
