@@ -35,10 +35,10 @@ export default function LandingPage() {
       <nav className={styles.nav}>
         <span className={styles.navLogo}>✝ BibleGPT</span>
         <div className={styles.navLinks}>
-          <a href="#features">Features</a>
-          <a href="#pricing">Pricing</a>
+          <a href="#features" className={styles.navTextLink}>Features</a>
+          <a href="#pricing" className={styles.navTextLink}>Pricing</a>
           <Link href="/auth/login" className={styles.navLogin}>Sign In</Link>
-          <Link href="/auth/register" className={styles.navCta}>Start Free Trial</Link>
+          <Link href="/auth/register" className={styles.navCta}>Try Free</Link>
         </div>
       </nav>
 
