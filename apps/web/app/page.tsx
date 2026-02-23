@@ -37,7 +37,7 @@ export default function LandingPage() {
           <a href="#features" className={styles.navTextLink}>Features</a>
           <a href="#ai" className={styles.navTextLink}>AI Chat</a>
           <Link href="/auth/login" className={styles.navLogin}>Sign In</Link>
-          <Link href="/auth/register" className={styles.navCta}>Try Free</Link>
+          <Link href="/auth/register" className={styles.navCta}>Try for Free</Link>
         </div>
       </nav>
 
@@ -55,7 +55,7 @@ export default function LandingPage() {
             </p>
             <div className={styles.heroCtas}>
               <Link href="/auth/register" className={styles.ctaPrimary}>
-                Start Free — 7 Days on Us →
+                Try BibleGPT for Free →
               </Link>
               <a href="#features" className={styles.ctaGhost}>See what's inside</a>
             </div>
@@ -132,7 +132,7 @@ export default function LandingPage() {
               <li><span className={styles.bullet}>✦</span> Covers theology, history &amp; prophecy</li>
               <li><span className={styles.bullet}>✦</span> Always quotes KJV scripture verbatim</li>
             </ul>
-            <Link href="/auth/register" className={styles.ctaPrimary}>Try It Free →</Link>
+            <Link href="/auth/register" className={styles.ctaPrimary}>Try BibleGPT for Free →</Link>
           </div>
           <div className={styles.aiVisual}>
             <div className={styles.verseCard}>
@@ -158,7 +158,7 @@ export default function LandingPage() {
         <div className={styles.ctaBanner}>
           <h2 className={styles.bannerTitle}>Begin your journey through God's Word today</h2>
           <p className={styles.bannerSub}>7-day free trial · No credit card required · Available on iOS, Android &amp; Web</p>
-          <Link href="/auth/register" className={styles.ctaBannerBtn}>Start Your Free Trial →</Link>
+          <Link href="/auth/register" className={styles.ctaBannerBtn}>Try BibleGPT for Free →</Link>
         </div>
       </section>
 
