@@ -36,12 +36,26 @@ export async function requireSubscription(
     return;
   }
 
-  const sub = await prisma.subscription.findUnique({
+  let sub = await prisma.subscription.findUnique({
     where: { userId: req.user.id },
     select: { status: true },
   });
 
-  if (!sub || (sub.status !== "active" && sub.status !== "trialing")) {
+  // Auto-create a 7-day trial for users who don't have a subscription yet
+  if (!sub) {
+    const trialEnd = new Date();
+    trialEnd.setDate(trialEnd.getDate() + 7);
+    sub = await prisma.subscription.create({
+      data: {
+        userId: req.user.id,
+        status: "trialing",
+        trialEndsAt: trialEnd,
+      },
+      select: { status: true },
+    });
+  }
+
+  if (sub.status !== "active" && sub.status !== "trialing") {
     res.status(403).json({ error: "Active subscription required" });
     return;
   }
