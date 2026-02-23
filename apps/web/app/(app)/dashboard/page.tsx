@@ -43,9 +43,9 @@ export default function DashboardPage() {
       <nav className={styles.nav}>
         <span className={styles.logo}>✝ BibleGPT</span>
         <div className={styles.navLinks}>
-          <Link href="/(app)/bible">Bible</Link>
-          <Link href="/(app)/ai">AI Chat</Link>
-          <Link href="/(app)/account">Account</Link>
+          <Link href="/bible">Bible</Link>
+          <Link href="/ai">AI Chat</Link>
+          <Link href="/account">Account</Link>
         </div>
       </nav>
 
@@ -66,10 +66,10 @@ export default function DashboardPage() {
 
         <div className={styles.quickGrid}>
           {[
-            { href: "/(app)/bible", icon: "📖", label: "Read Bible" },
-            { href: "/(app)/ai", icon: "🤖", label: "Ask BibleGPT" },
+            { href: "/bible", icon: "📖", label: "Read Bible" },
+            { href: "/ai", icon: "🤖", label: "Ask BibleGPT" },
             { href: "/pricing", icon: "👑", label: "Upgrade Plan" },
-            { href: "/(app)/account", icon: "👤", label: "My Account" },
+            { href: "/account", icon: "👤", label: "My Account" },
           ].map((item) => (
             <Link key={item.href} href={item.href} className={styles.quickCard}>
               <span className={styles.quickIcon}>{item.icon}</span>
