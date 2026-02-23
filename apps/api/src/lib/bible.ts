@@ -56,21 +56,35 @@ export const BOOK_CHAPTER_COUNTS: Record<string, number> = {
   "Jude": 1, "Revelation": 22,
 };
 
+export const SUPPORTED_TRANSLATIONS: Record<string, string> = {
+  kjv: "King James Version",
+  web: "World English Bible",
+  asv: "American Standard Version",
+  douayrheims: "Douay-Rheims",
+};
+
+const VALID_TRANSLATIONS = new Set(Object.keys(SUPPORTED_TRANSLATIONS));
+
+export function resolveTranslation(t?: string): string {
+  return t && VALID_TRANSLATIONS.has(t) ? t : "kjv";
+}
+
 export async function fetchChapter(
   book: string,
-  chapter: number
+  chapter: number,
+  translation = "kjv"
 ): Promise<BibleChapterResponse> {
   const query = encodeURIComponent(`${book} ${chapter}`);
-  const res = await fetch(`${BIBLE_API_BASE}/${query}?translation=kjv&verse_numbers=true`);
+  const t = resolveTranslation(translation);
+  const res = await fetch(`${BIBLE_API_BASE}/${query}?translation=${t}&verse_numbers=true`);
   if (!res.ok) throw new Error(`Bible API error: ${res.status}`);
   return res.json() as Promise<BibleChapterResponse>;
 }
 
-export async function searchBible(query: string): Promise<BibleVerse[]> {
-  // bible-api.com doesn't have a search endpoint; use a simple word search approach
-  // For a real deployment, consider a dedicated Bible search API or local KJV JSON
+export async function searchBible(query: string, translation = "kjv"): Promise<BibleVerse[]> {
+  const t = resolveTranslation(translation);
   const res = await fetch(
-    `${BIBLE_API_BASE}/${encodeURIComponent(query)}?translation=kjv`
+    `${BIBLE_API_BASE}/${encodeURIComponent(query)}?translation=${t}`
   );
   if (!res.ok) return [];
   const data = (await res.json()) as BibleChapterResponse;

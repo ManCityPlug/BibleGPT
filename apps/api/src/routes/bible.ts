@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { KJV_BOOKS, BOOK_CHAPTER_COUNTS, fetchChapter, searchBible } from "../lib/bible";
+import { KJV_BOOKS, BOOK_CHAPTER_COUNTS, fetchChapter, searchBible, resolveTranslation } from "../lib/bible";
 import { requireAuth } from "../middleware/auth";
 
 const router = Router();
@@ -23,8 +23,10 @@ router.get("/api/bible/:book/:chapter", requireAuth, async (req, res) => {
     return;
   }
 
+  const translation = resolveTranslation(req.query.translation as string);
+
   try {
-    const data = await fetchChapter(book, chapterNum);
+    const data = await fetchChapter(book, chapterNum, translation);
     res.json(data);
   } catch (err) {
     console.error("Bible fetch error:", err);
@@ -32,7 +34,7 @@ router.get("/api/bible/:book/:chapter", requireAuth, async (req, res) => {
   }
 });
 
-// GET /api/bible/search?q=...
+// GET /api/bible/search?q=...&translation=kjv
 router.get("/api/bible/search", requireAuth, async (req, res) => {
   const q = req.query.q as string;
   if (!q || q.trim().length < 2) {
@@ -40,8 +42,10 @@ router.get("/api/bible/search", requireAuth, async (req, res) => {
     return;
   }
 
+  const translation = resolveTranslation(req.query.translation as string);
+
   try {
-    const verses = await searchBible(q.trim());
+    const verses = await searchBible(q.trim(), translation);
     res.json({ verses });
   } catch (err) {
     console.error("Bible search error:", err);

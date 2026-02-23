@@ -38,7 +38,7 @@ router.post("/api/journal", requireAuth, async (req, res) => {
 // PATCH /api/journal/:id
 router.patch("/api/journal/:id", requireAuth, async (req, res) => {
   const entry = await prisma.journal.findFirst({
-    where: { id: req.params.id, userId: req.user!.id },
+    where: { id: req.params.id as string, userId: req.user!.id },
   });
   if (!entry) { res.status(404).json({ error: "Not found" }); return; }
 
@@ -52,7 +52,7 @@ router.patch("/api/journal/:id", requireAuth, async (req, res) => {
 // DELETE /api/journal/:id
 router.delete("/api/journal/:id", requireAuth, async (req, res) => {
   const entry = await prisma.journal.findFirst({
-    where: { id: req.params.id, userId: req.user!.id },
+    where: { id: req.params.id as string, userId: req.user!.id },
   });
   if (!entry) { res.status(404).json({ error: "Not found" }); return; }
   await prisma.journal.delete({ where: { id: entry.id } });
@@ -62,7 +62,7 @@ router.delete("/api/journal/:id", requireAuth, async (req, res) => {
 // POST /api/journal/:id/mark-answered
 router.post("/api/journal/:id/mark-answered", requireAuth, async (req, res) => {
   const entry = await prisma.journal.findFirst({
-    where: { id: req.params.id, userId: req.user!.id, isPrayer: true },
+    where: { id: req.params.id as string as string, userId: req.user!.id, isPrayer: true },
   });
   if (!entry) { res.status(404).json({ error: "Not found" }); return; }
 
@@ -79,7 +79,7 @@ router.post("/api/journal/:id/share", requireAuth, async (req, res) => {
   if (!groupId) { res.status(400).json({ error: "groupId required" }); return; }
 
   const entry = await prisma.journal.findFirst({
-    where: { id: req.params.id, userId: req.user!.id },
+    where: { id: req.params.id as string as string, userId: req.user!.id },
   });
   if (!entry) { res.status(404).json({ error: "Not found" }); return; }
 

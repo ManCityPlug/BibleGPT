@@ -99,10 +99,10 @@ export interface PrayerRequest {
 // ─── Bible ────────────────────────────────────────────────────────────────────
 export const bibleApi = {
   books: () => apiFetch<{ books: BibleBook[] }>("/api/bible/books"),
-  chapter: (book: string, chapter: number) =>
-    apiFetch<BibleChapter>(`/api/bible/${encodeURIComponent(book)}/${chapter}`),
-  search: (q: string) =>
-    apiFetch<{ verses: BibleVerse[] }>(`/api/bible/search?q=${encodeURIComponent(q)}`),
+  chapter: (book: string, chapter: number, translation = "kjv") =>
+    apiFetch<BibleChapter>(`/api/bible/${encodeURIComponent(book)}/${chapter}?translation=${translation}`),
+  search: (q: string, translation = "kjv") =>
+    apiFetch<{ verses: BibleVerse[] }>(`/api/bible/search?q=${encodeURIComponent(q)}&translation=${translation}`),
 };
 
 // ─── Notes ────────────────────────────────────────────────────────────────────

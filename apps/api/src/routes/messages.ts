@@ -49,7 +49,7 @@ router.get("/api/messages", requireAuth, async (req, res) => {
 // GET /api/messages/:conversationId
 router.get("/api/messages/:conversationId", requireAuth, async (req, res) => {
   const userId = req.user!.id;
-  const { conversationId } = req.params;
+  const conversationId = req.params.conversationId as string;
 
   // Verify user is part of this conversation
   if (!conversationId.includes(userId)) {
@@ -81,7 +81,7 @@ router.get("/api/messages/:conversationId", requireAuth, async (req, res) => {
 
 // POST /api/messages/:receiverId — send a DM
 router.post("/api/messages/:receiverId", requireAuth, async (req, res) => {
-  const { receiverId } = req.params;
+  const receiverId = req.params.receiverId as string;
   const { content } = req.body as { content: string };
   if (!content?.trim()) { res.status(400).json({ error: "content required" }); return; }
   if (receiverId === req.user!.id) {
