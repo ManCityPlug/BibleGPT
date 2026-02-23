@@ -115,7 +115,7 @@ export default function ProfileScreen() {
           style={styles.shareBtn}
           onPress={() =>
             Share.share({
-              message: `Join me on BibleGPT — the #1 Bible study app! Use my code ${referralCode} when you sign up for a free bonus. Download: https://biblegpt.app`,
+              message: `Join me on BibleGPT — the #1 Bible study app! Use my code ${referralCode} when you sign up for a free bonus. Download: https://biblegpt.net`,
               title: "Join me on BibleGPT",
             })
           }
