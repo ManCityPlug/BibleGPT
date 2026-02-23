@@ -7,20 +7,36 @@ import { useRouter } from "expo-router";
 import { bibleApi } from "@/lib/api";
 import type { BibleBook } from "@/lib/api";
 import { colors, spacing, typography, radius } from "@/constants/theme";
+import { BOOK_CHAPTER_COUNTS } from "@/constants/bible";
+
+const FALLBACK_BOOKS: BibleBook[] = Object.entries(BOOK_CHAPTER_COUNTS).map(
+  ([name, chapters]) => ({ name, chapters })
+);
 
 export default function BibleScreen() {
   const router = useRouter();
   const [books, setBooks] = useState<BibleBook[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    bibleApi.books().then(({ books }) => setBooks(books)).finally(() => setLoading(false));
+    bibleApi
+      .books()
+      .then(({ books: fetched }) => {
+        setBooks(fetched && fetched.length > 0 ? fetched : FALLBACK_BOOKS);
+      })
+      .catch(() => {
+        setBooks(FALLBACK_BOOKS);
+        setError(true);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const OT_END = 39;
-  const filtered = books.filter((b) => b.name.toLowerCase().includes(search.toLowerCase()));
-  const ot = filtered.slice(0, OT_END);
+  const allBooks = books.length > 0 ? books : FALLBACK_BOOKS;
+  const filtered = allBooks.filter((b) => b.name.toLowerCase().includes(search.toLowerCase()));
+  const ot = filtered.slice(0, Math.min(OT_END, filtered.length));
   const nt = filtered.slice(OT_END);
 
   if (loading) {
@@ -39,6 +55,21 @@ export default function BibleScreen() {
     );
   }
 
+  type ListItem =
+    | { type: "section"; label: string }
+    | { type: "book"; name: string; chapters: number };
+
+  const listData: ListItem[] = [
+    { type: "section", label: "OLD TESTAMENT" },
+    ...ot.map((b): ListItem => ({ type: "book", ...b })),
+    ...(nt.length > 0
+      ? [
+          { type: "section" as const, label: "NEW TESTAMENT" },
+          ...nt.map((b): ListItem => ({ type: "book", ...b })),
+        ]
+      : []),
+  ];
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -53,25 +84,27 @@ export default function BibleScreen() {
           onChangeText={setSearch}
           placeholder="Search books..."
           placeholderTextColor={colors.textTertiary}
+          clearButtonMode="while-editing"
         />
       </View>
 
-      <FlatList
-        data={[
-          { type: "section", label: "OLD TESTAMENT" },
-          ...ot.map((b) => ({ type: "book", ...b })),
-          { type: "section", label: "NEW TESTAMENT" },
-          ...nt.map((b) => ({ type: "book", ...b })),
-        ]}
-        keyExtractor={(item, i) => `${item.type}-${i}`}
-        contentContainerStyle={styles.list}
-        renderItem={({ item }) => {
-          if (item.type === "section") {
-            return <Text style={styles.sectionLabel}>{(item as { label: string }).label}</Text>;
-          }
-          return <BookItem item={item as BibleBook} />;
-        }}
-      />
+      {filtered.length === 0 ? (
+        <View style={styles.center}>
+          <Text style={{ color: colors.textSecondary }}>No books found</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={listData}
+          keyExtractor={(item, i) => `${item.type}-${i}`}
+          contentContainerStyle={styles.list}
+          renderItem={({ item }) => {
+            if (item.type === "section") {
+              return <Text style={styles.sectionLabel}>{(item as { label: string }).label}</Text>;
+            }
+            return <BookItem item={item as BibleBook} />;
+          }}
+        />
+      )}
     </View>
   );
 }

@@ -28,7 +28,10 @@ export default function RootLayout() {
   const router = useRouter();
   const segments = useSegments();
   const [session, setSession] = useState<Session | null | undefined>(undefined);
+  // routeReady stays false until we've fully resolved routing on first load
+  const [routeReady, setRouteReady] = useState(false);
   const paywallTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const routeResolvedRef = useRef(false);
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, s) => {
@@ -46,18 +49,24 @@ export default function RootLayout() {
 
     if (!session) {
       if (!inAuthGroup) router.replace("/(auth)/login");
+      setRouteReady(true);
+      routeResolvedRef.current = true;
       return;
     }
 
     AsyncStorage.getItem("@biblegpt_onboarding_done").then(async (done) => {
       if (!done) {
         if (!inOnboarding) router.replace("/(onboarding)");
+        setRouteReady(true);
+        routeResolvedRef.current = true;
         return;
       }
 
       const cachedStatus = await AsyncStorage.getItem("@biblegpt_subscription_status");
       if (isAccessGranted(cachedStatus)) {
         if (inAuthGroup || inOnboarding || inPayment) router.replace("/(tabs)");
+        setRouteReady(true);
+        routeResolvedRef.current = true;
         return;
       }
 
@@ -66,6 +75,8 @@ export default function RootLayout() {
         if (isAccessGranted(status)) {
           await AsyncStorage.setItem("@biblegpt_subscription_status", status ?? "");
           if (inAuthGroup || inOnboarding || inPayment) router.replace("/(tabs)");
+          setRouteReady(true);
+          routeResolvedRef.current = true;
           return;
         }
 
@@ -73,25 +84,37 @@ export default function RootLayout() {
           const paywallShown = await AsyncStorage.getItem("@biblegpt_paywall_shown");
           if (!paywallShown) {
             if (inAuthGroup || inOnboarding) router.replace("/(tabs)");
+            setRouteReady(true);
+            routeResolvedRef.current = true;
             paywallTimerRef.current = setTimeout(async () => {
               await AsyncStorage.setItem("@biblegpt_paywall_shown", "true");
               router.replace("/payment" as never);
             }, 10000);
           } else {
             router.replace("/payment" as never);
+            setRouteReady(true);
+            routeResolvedRef.current = true;
           }
+        } else {
+          setRouteReady(true);
+          routeResolvedRef.current = true;
         }
       } catch {
         if (inAuthGroup || inOnboarding) router.replace("/(tabs)");
+        setRouteReady(true);
+        routeResolvedRef.current = true;
       }
     });
 
     return () => {
       if (paywallTimerRef.current) clearTimeout(paywallTimerRef.current);
     };
-  }, [session, segments]);
+  // Only re-run when session changes, NOT on segment changes after first resolve
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
 
-  if (session === undefined) {
+  // Show spinner until session is known AND routing is resolved
+  if (session === undefined || !routeReady) {
     return (
       <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.background }}>
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>

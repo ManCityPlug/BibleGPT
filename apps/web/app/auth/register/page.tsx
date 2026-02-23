@@ -36,7 +36,7 @@ export default function RegisterPage() {
         });
       }
 
-      router.push("/(app)/dashboard");
+      router.push("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed");
     } finally {
